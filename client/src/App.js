@@ -43,8 +43,8 @@ function App() {
         userVideo.current.srcObject = stream;
       }
     })
-
     socket.current.on("yourID", (id) => {
+      console.log(id,"user")
       setYourID(id);
     })
     socket.current.on("allUsers", (users) => {
@@ -58,44 +58,8 @@ function App() {
     })
   }, []);
 
-  function callPeer(id) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      config: {
-
-        iceServers: [
-            {
-                urls: "stun:numb.viagenie.ca",
-                username: "sultan1640@gmail.com",
-                credential: "98376683"
-            },
-            {
-                urls: "turn:numb.viagenie.ca",
-                username: "sultan1640@gmail.com",
-                credential: "98376683"
-            }
-        ]
-    },
-      stream: stream,
-    });
-
-    peer.on("signal", data => {
-      socket.current.emit("callUser", { userToCall: id, signalData: data, from: yourID })
-    })
-
-    peer.on("stream", stream => {
-      if (partnerVideo.current) {
-        partnerVideo.current.srcObject = stream;
-      }
-    });
-
-    socket.current.on("callAccepted", signal => {
-      setCallAccepted(true);
-      peer.signal(signal);
-    })
-
-  }
+  
+   
 
   function acceptCall() {
     setCallAccepted(true);
@@ -133,7 +97,7 @@ function App() {
   if (receivingCall) {
     incomingCall = (
       <div>
-        <h1>{caller} is calling you</h1>
+        {/* <h1>{caller} is calling you</h1> */}
         <button onClick={acceptCall}>Accept</button>
       </div>
     )
@@ -149,12 +113,12 @@ function App() {
           if (key === yourID) {
             return null;
           }
-          return (
-            <button onClick={() => callPeer(key)}>Call {key}</button>
+          return(
+            <button onClick={() => callPeer(key)}>Call {key} </button>
           );
         })}
       </Row>
-      <Row>
+      <Row>    
         {incomingCall}
       </Row>
     </Container>
